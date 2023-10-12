@@ -27,3 +27,8 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run build
+    - run: |
+        git checkout -b gh-pages
+        git add dist/
+        git -c user.name='GitHub Actions' -c user.email='actions@github.com' commit -m "Deploy to GitHub Pages"
+        git push -u origin gh-pages
