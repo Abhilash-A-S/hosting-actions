@@ -19,6 +19,10 @@ jobs:
         node-version: [18.x]
 
     steps:
+    - name: Set Git Identity
+      run: |
+       git config --global user.email "abhilashatl57@gmail.com"
+       git config --global user.name "Abhilash-A-S"
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
