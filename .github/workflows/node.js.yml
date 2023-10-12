@@ -26,9 +26,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-    - run: npm run build
-    - run: |
-        git checkout -b gh-pages
-        git add -f dist/
-        git -c user.name='Abhilash-A-S' -c user.email='abhilashatl57@gmail.com' commit -m "Deploy to GitHub Pages"
-        git push -u origin gh-pages
+    - run: npm run build && npx gh-pages -d dist
+        
