@@ -28,5 +28,5 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - name: Build
-    - run: npm run build && npx gh-pages -d dist
+    - run: npm run build
         
