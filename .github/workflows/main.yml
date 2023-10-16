@@ -23,7 +23,10 @@ jobs:
 
       - name: Build Angular App
         run: npm run build
-
+      - name: set credentials
+        run: |
+            git config --local user.name "github-actions[bot]"
+            git config --local user.email "github-actions[bot]@users.noreply.github.com"
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
