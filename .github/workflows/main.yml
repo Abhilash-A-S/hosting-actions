@@ -23,17 +23,19 @@ jobs:
 
     - name: Build Angular App
       run: npm run build
-
     - name: Configure Git
       run: |
         git config --local user.name "github-actions[bot]"
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Create gh-pages Branch
+      run: |
+        git checkout -b gh-pages
+        git add .
+        git commit -m "Initialize gh-pages branch"
+        git push origin gh-pages
+
     - name: Deploy to GitHub Pages
       run: |
         git remote set-url origin https://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@github.com/Abhilash-A-S/hosting-actions.git
         git push origin gh-pages
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GH_TOKEN }}
-        publish_dir: ./dist/hosting-actions
