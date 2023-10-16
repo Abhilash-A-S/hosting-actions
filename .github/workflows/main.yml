@@ -37,5 +37,5 @@ jobs:
 
     - name: Deploy to GitHub Pages
       run: |
-        git remote set-url origin https://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@github.com/Abhilash-A-S/hosting-actions.git
+        git remote set-url origin https://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@github.com/Abhilash-A-S/hosting-actions.git
         git push origin gh-pages
