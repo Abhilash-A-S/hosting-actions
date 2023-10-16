@@ -10,10 +10,6 @@ permissions: {}
 
 jobs:
   rebuild-dist:
-    concurrency:
-      group: '${{ github.workflow }} / ${{ github.job }} @ ${{ github.ref }}'
-      cancel-in-progress: true
-
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
