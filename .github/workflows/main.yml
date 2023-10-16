@@ -28,7 +28,10 @@ jobs:
       run: |
         git config --local user.name "github-actions[bot]"
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
-
+    - name: Deploy to GitHub Pages
+      run: |
+        git remote set-url origin https://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@github.com/Abhilash-A-S/hosting-actions.git
+        git push origin gh-pages
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
