@@ -1,32 +1,51 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
+name: Rebuild distributables for Dependabot PRs
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches:
+      - 'dependabot/npm**'
+
+# No permissions needed for `GITHUB_TOKEN` since we're using a PAT instead
+permissions: {}
 
 jobs:
-  build:
+  rebuild-dist:
+    if: ${{ github.event.sender.login == 'dependabot[bot]' }}
+
+    # This allows a subsequently queued workflow run to interrupt previous runs.
+    # It is evaluated AFTER the job's `if` condition, so a push triggered by this
+    # workflow's PAT will NOT interrupt a run triggered by a push from Dependabot.
+    concurrency:
+      group: '${{ github.workflow }} / ${{ github.job }} @ ${{ github.ref }}'
+      cancel-in-progress: true
 
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-
     steps:
-    - name: Set Git Identity
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - run: npm ci
-    - name: Build
-    - run: npm run build && npx gh-pages -d dist
-        
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAGES_AUTOMATION_PAT }}
+
+      - name: Setup Node.JS
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.node-version'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Rebuild the dist/ directory
+        run: npm run build
+
+      - name: Commit any differences present in the dist/ directory
+        run: |
+          if [ "$(git diff --ignore-space-at-eol dist/ | wc -l)" -gt "0" ]; then
+            echo "Detected uncommitted changes after rebuild in dist folder. Committing..."
+            git add dist/
+            git config --local user.name "github-actions[bot]"
+            git config --local user.email "github-actions[bot]@users.noreply.github.com"
+            git commit -m "Update distributables after Dependabot 🤖"
+            echo "Pushing branch ${{ github.ref_name }}"
+            git push origin ${{ github.ref_name }}
+          fi
