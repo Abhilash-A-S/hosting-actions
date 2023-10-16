@@ -10,11 +10,6 @@ permissions: {}
 
 jobs:
   rebuild-dist:
-    if: ${{ github.event.sender.login == 'dependabot[bot]' }}
-
-    # This allows a subsequently queued workflow run to interrupt previous runs.
-    # It is evaluated AFTER the job's `if` condition, so a push triggered by this
-    # workflow's PAT will NOT interrupt a run triggered by a push from Dependabot.
     concurrency:
       group: '${{ github.workflow }} / ${{ github.job }} @ ${{ github.ref }}'
       cancel-in-progress: true
